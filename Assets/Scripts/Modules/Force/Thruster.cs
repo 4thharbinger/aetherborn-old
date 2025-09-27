@@ -1,5 +1,6 @@
 using Mono.Cecil;
 
+using System;
 using System.Linq;
 
 using Unity.Mathematics;
@@ -15,7 +16,11 @@ public class Thruster : Module, IActivityProvider, ITickedModule, IGraphicsModul
 
     public Vector3 thrustVector = Vector3.up;
 
+    public ThrusterFX fx;
+
     public ParticleSystem particles;
+
+    public float exhaustPressure = 101325f;
 
     private double previousActivity;
     private double previousDt;
@@ -61,6 +66,12 @@ public class Thruster : Module, IActivityProvider, ITickedModule, IGraphicsModul
             var emission = particles.emission;
             emission.rateOverTimeMultiplier = (float)previousActivity;
             emission.rateOverDistanceMultiplier = (float)previousActivity;
+        }
+        if (fx)
+        {
+            fx.throttle = (float)throttle;
+            fx.vacuum = 1 - (float)Math.Tanh(CelestialBody.CalculatePressure(vehicle.floatingTransform.Position) / exhaustPressure);
+            fx.Draw();
         }
     }
 }

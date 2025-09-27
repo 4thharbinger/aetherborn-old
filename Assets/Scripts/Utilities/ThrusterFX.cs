@@ -1,3 +1,8 @@
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using UnityEngine;
 
 public class ThrusterFX : MonoBehaviour
@@ -27,18 +32,57 @@ public class ThrusterFX : MonoBehaviour
     {
         renderer = GetComponent<SkinnedMeshRenderer>();
 
-        materialShockwave = renderer.materials[0];
-        materialCones = renderer.materials[1];
-        materialCore = renderer.materials[2];
+        //if (Application.isPlaying)
+        //{
+        //    materialShockwave = renderer.materials[0];
+        //    materialCones = renderer.materials[1];
+        //    materialCore = renderer.materials[2];
+        //} else
+        //{
+            materialShockwave = renderer.sharedMaterials[0];
+            materialCones = renderer.sharedMaterials[1];
+            materialCore = renderer.sharedMaterials[2];
+        //}
+    }
+
+    [ContextMenu("Save Materials")]
+    private void SaveMaterials()
+    {
+#if UNITY_EDITOR
+
+        var target = PrefabUtility.IsPartOfPrefabInstance(this) ? PrefabUtility.GetCorrespondingObjectFromSource(PrefabUtility.GetNearestPrefabInstanceRoot(gameObject)) : null;
+
+        if (!target) return;
+
+        Debug.Log(target, target);
+
+        if (AssetDatabase.GetAssetPath(materialShockwave) != AssetDatabase.GetAssetPath(target))
+        AssetDatabase.RemoveObjectFromAsset(materialShockwave);
+
+        if (AssetDatabase.GetAssetPath(materialCones) != AssetDatabase.GetAssetPath(target))
+            AssetDatabase.RemoveObjectFromAsset(materialCones);
+
+        if (AssetDatabase.GetAssetPath(materialCore) != AssetDatabase.GetAssetPath(target))
+            AssetDatabase.RemoveObjectFromAsset(materialCore);
+
+        AssetDatabase.AddObjectToAsset(materialShockwave, target);
+        AssetDatabase.AddObjectToAsset(materialCones, target);
+        AssetDatabase.AddObjectToAsset(materialCore, target);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+#endif
     }
 
     private void OnValidate()
     {
         Awake();
+
+        if (!materialShockwave || !materialCones || !materialCore) return;
         Draw();
     }
 
-    void Draw()
+    public void Draw()
     {
         renderer.enabled = throttle > 0.01f;
         renderer.SetBlendShapeWeight(0, vacuum * 100f);
