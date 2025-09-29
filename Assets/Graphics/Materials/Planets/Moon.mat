@@ -194,7 +194,7 @@ Material:
     - _Rim_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Second_Color: {r: 0.51040006, g: 0.51402354, b: 0.5176471, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _offset: {r: 390519800, g: -9799.53, b: -40733.76, a: 0}
+    - _offset: {r: 389192600, g: 10509.745, b: -3682676.5, a: 0}
     - origin: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
